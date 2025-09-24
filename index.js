@@ -13,7 +13,136 @@ const progressBar = document.getElementById("progressBar");
 const getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 // Step 0: Store your API key here for reference and easy access.
-const API_KEY = "";
+const API_KEY = "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniUHDKDls";
+     function GetBreed(breeds){
+      for(let position=0; position<breeds.length; position++){
+        if(breeds[position]["name"]==breedSelect.value)
+            return breeds[position];
+      }
+     }
+     async function GetBreeds(){
+         const breeds=await fetch("https://api.thecatapi.com/v1/breeds",{headers:{
+            "x-api-key": "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniUHDKDls",
+        }
+       
+      }
+         
+     );
+      const holdBreeds=await breeds.json();
+      return holdBreeds;
+     }
+    
+     async function initialLoad(){
+        const breeds=await fetch("https://api.thecatapi.com/v1/breeds",{headers:{
+            "x-api-key": "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniUHDKDls",
+             
+        }});
+       const holdBreeds=await breeds.json();
+       console.log(holdBreeds);
+       for(let breed of holdBreeds){
+          const breedOption=document.createElement("option");
+          breedOption.textContent=breed["name"];
+          breedOption.value=breed["id"];
+          breedSelect.appendChild(breedOption);
+        }
+       async function describeBreed(){
+        const infos=document.getElementById("breedInfo");
+          for(let breed of holdBreeds){
+             if(breed["id"]==breedSelect.value){
+                 for(let info in breed){
+                    const item=document.createElement("li");
+                    item.textContent=`${info}: ${breed[info]}`;
+                    infos.appendChild(item);
+                 }
+             }
+          }
+       }
+        breedSelect.addEventListener("change", describeBreed);
+      
+     }
+     initialLoad();
+     function addDescribeBreed(){
+       breedSelect.addEventListener("change", describeBreed);
+     }
+    
+          
+        
+     /*breedSelect.addEvenListener("change", function(){
+      const breedInfo=await fetch("https://api.thecatapi.com/v1/images/search?breed_ids="+GetBreedID(breeds), 
+          {headers:{
+            "x-api-key": "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniUHDKDls",
+          }}
+        );
+          
+         const holdInfo=await breedInfo.json();
+        const holdBreedInfo=holdInfo[0]["breeds"][0];
+         const infos=document.getElementById("breedInfo");
+             //Removes description of the previous breed
+             infos.innerHTML="";
+            for(let info in holdBreedInfo){
+              const output=document.createElement("li");
+              
+              output.textContent=`${info}: ${holdBreedInfo[info]}`;
+              infos.appendChild(output);
+            }
+          
+        }
+      );*/
+    
+     
+      /*const holdBreeds=await breeds.json();
+       
+      for(let breed of holdBreeds){
+        const option=document.createElement("option");
+        option.id=option.textContent=breed["name"];
+        breedSelect.appendChild(option);
+      }
+       
+       
+  }
+      initialLoad();
+    /*  async function describeBreed(){
+       function GetBreedID(breeds){
+             
+            for(let position=0; position<breeds.length; position++ ){
+                
+               if(breeds[position]["name"]==breedSelect.value){
+                
+                return breeds[position]["id"];
+               }
+            }
+         }
+         const breeds=await GetBreeds();
+         
+         const breedInfo=await fetch("https://api.thecatapi.com/v1/images/search?breed_ids="+GetBreedID(breeds), 
+          {headers:{
+            "x-api-key": "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniUHDKDls",
+          }}
+        );
+          
+         const holdInfo=await breedInfo.json();
+        const holdBreedInfo=holdInfo[0]["breeds"][0];
+         const infos=document.getElementById("breedInfo");
+             //Removes description of the previous breed
+             infos.innerHTML="";
+            for(let info in holdBreedInfo){
+              const output=document.createElement("li");
+              
+              output.textContent=`${info}: ${holdBreedInfo[info]}`;
+              infos.appendChild(output);
+            }
+          
+        }
+      
+      breedSelect.addEventListener("change", function(){
+         describeBreed();
+        
+      });*/
+    async function getBreeds(){
+      return axios.get("https://api.thecatapi.com/v1/breeds");
+    }
+//    const breeds=getBreeds();
+    //breeds.then()
 
 /**
  * 1. Create an async function "initialLoad" that does the following:
@@ -111,3 +240,4 @@ export async function favourite(imgId) {
  * - Test other breeds as well. Not every breed has the same data available, so
  *   your code should account for this.
  */
+
