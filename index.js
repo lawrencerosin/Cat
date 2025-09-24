@@ -33,37 +33,31 @@ const API_KEY = "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniU
      }
     
      async function initialLoad(){
-        const breeds=await fetch("https://api.thecatapi.com/v1/breeds",{headers:{
-            "x-api-key": "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniUHDKDls",
-             
-        }});
-       const holdBreeds=await breeds.json();
-       console.log(holdBreeds);
-       for(let breed of holdBreeds){
+        await axios.get("https://api.thecatapi.com/v1/breeds").then(response=>{
+        for(let breed of response.data){
           const breedOption=document.createElement("option");
-          breedOption.textContent=breed["name"];
           breedOption.value=breed["id"];
+          breedOption.textContent=breed["name"];
           breedSelect.appendChild(breedOption);
+          describeBreed(breed);
         }
-       async function describeBreed(){
+      });
+       async function describeBreed(breed){
         const infos=document.getElementById("breedInfo");
-          for(let breed of holdBreeds){
-             if(breed["id"]==breedSelect.value){
+         
                  for(let info in breed){
                     const item=document.createElement("li");
                     item.textContent=`${info}: ${breed[info]}`;
                     infos.appendChild(item);
                  }
-             }
-          }
+             
+          
        }
         breedSelect.addEventListener("change", describeBreed);
       
      }
      initialLoad();
-     function addDescribeBreed(){
-       breedSelect.addEventListener("change", describeBreed);
-     }
+      
     
           
         
@@ -236,6 +230,11 @@ export async function favourite(imgId) {
 /**
  * 10. Test your site, thoroughly!
  * - What happens when you try to load the Malayan breed?
+ *  - If this is working, good job! If not, look for the reason why and fix it!
+ * - Test other breeds as well. Not every breed has the same data available, so
+ *   your code should account for this.
+ */
+
  *  - If this is working, good job! If not, look for the reason why and fix it!
  * - Test other breeds as well. Not every breed has the same data available, so
  *   your code should account for this.
