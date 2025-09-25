@@ -35,7 +35,8 @@ async function GetBreeds() {
 }
 
 async function initialLoad() {
-  await axios.get("https://api.thecatapi.com/v1/breeds").then(response => {
+  await axios.get("https://api.thecatapi.com/v1/breeds").then(
+   (response)=>{
     for (let breed of response.data) {
       const breedOption = document.createElement("option");
       breedOption.value = breed["id"];
@@ -45,12 +46,9 @@ async function initialLoad() {
         describeBreed(breed);
       });
     }
-    axios.get(breedLink, {
-      onDownloadProgress: (progress) => {
-        progressBar.style.width = progress.total + "%";
-      }
-    })
+    
   });
+}
 
 
 
@@ -58,7 +56,7 @@ async function initialLoad() {
   async function describeBreed(breed) {
 
     if (breed["id"] == breedSelect.value) {
-
+      updateProgress();
       infoDump.innerHTML = "";
       for (let info in breed) {
         const item = document.createElement("div");
@@ -71,27 +69,26 @@ async function initialLoad() {
   }
 
 
-}
+
    
   let requestTime, responseTime;
   let timeBetween;
   axios.interceptors.request.use(function (request) {
     requestTime=Date.now();
-    progressBar.style.width=0+"%";
-    progressBar.style.cursor="progress";
-    progressBar.textContent="hello";
-    // Do something before request is sent
-    return request;
+  
+  //  console.log(axios.onDownloadProgress());
+ 
+   return request;
   });
   axios.interceptors.response.use(function (response) {
     responseTime=Date.now();
     timeBetween=responseTime-requestTime;
-    progressBar.style.display="none";
-    progressBar.style.cursor="default";
+    
     console.log(timeBetween);
     // Do something before request is sent
     return response;
   });
+
 initialLoad();
 
 
@@ -101,7 +98,18 @@ initialLoad();
 async function getBreeds() {
   return axios.get("https://api.thecatapi.com/v1/breeds");
 }
-
+async function updateProgress(){
+   axios({url:"https://api.thecatapi.com/v1/images/search", 
+    onDownloadProgress:(status)=>{
+    const percent=status["loaded"]/status["bytes"]*100;
+      progressBar.style.width=percent+"%";
+      if(percent<100)
+        progressBar.style.cursor="progress";
+      else
+        progressBar.style.cursor="default";
+    }
+   })
+}
 
 /**
  * 1. Create an async function "initialLoad" that does the following:
