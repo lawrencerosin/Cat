@@ -46,7 +46,7 @@ const API_KEY = "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniU
         }
         axios.get(breedLink, {
           onDownloadProgress: (progress)=>{
-            document.getElementById("progressBar").style.width=progress.total+"%";
+            progressBar.style.width=progress.total+"%";
           }
         })
       });
@@ -60,15 +60,15 @@ const API_KEY = "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniU
       });*/
       
        async function describeBreed(breed){
-        console.log(breedSelect.value);
+        console.log(breed["id"]);
         if(breed["id"]==breedSelect.value){
-        const infos=document.getElementById("infoDump");
-         infos.innerHTML="";
+       
+         infoDump.innerHTML="";
          for(let info in breed){
             const item=document.createElement("div");
             item.className="info";
             item.textContent=`${info}: ${breed[info]}`;
-            infos.appendChild(item);
+            infoDump.appendChild(item);
           }
         }   
           
@@ -163,9 +163,18 @@ const API_KEY = "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniU
  * - You can call this function by clicking on the heart at the top right of any image.
  */
 export async function favourite(imgId) {
-  // your code here
-}
+   const imageURL="https://cdn2.thecatapi.com/images/"+imgId;
+   axios.post(imageURL, {
+     image: imgId,
+     headers: {
+            "x-api-key": "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniUHDKDls",
+     }
 
+   }).then(function(){
+      alert("success");
+   }).catch(function(){console.log("hello");});
+}
+//favourite("munc");
 /**
  * 9. Test your favourite() function by creating a getFavourites() function.
  * - Use Axios to get all of your favourites from the cat API.
