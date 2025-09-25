@@ -34,37 +34,51 @@ async function GetBreeds() {
   return holdBreeds;
 }
 
-async function initialLoad() {
-  await axios.get("https://api.thecatapi.com/v1/breeds").then(
+function initialLoad() {
+  axios.get("https://api.thecatapi.com/v1/breeds").then(
    (response)=>{
     for (let breed of response.data) {
       const breedOption = document.createElement("option");
       breedOption.value = breed["id"];
       breedOption.textContent = breed["name"];
       breedSelect.appendChild(breedOption);
-      breedSelect.addEventListener("change", function () {
-        describeBreed(breed);
-      });
+      
     }
     
   });
 }
 
+breedSelect.addEventListener("change", describeBreed);
 
 
+  async function describeBreed(event) {
 
-  async function describeBreed(breed) {
-
-    if (breed["id"] == breedSelect.value) {
+      const breed=breedSelect.value;
+    
+      const breedInfo=await axios.get(`https://api.thecatapi.com/v1/images/search?limit=10&breed_ids=${breed}&api_key=${API_KEY}`)
       updateProgress();
+    
       infoDump.innerHTML = "";
-      for (let info in breed) {
-        const item = document.createElement("div");
-        item.className = "info";
-        item.textContent = `${info}: ${breed[info]}`;
-        infoDump.appendChild(item);
+      clear();
+     for(let position=0; position<breedInfo["data"].length; position++){
+          const specificInfo=breedInfo["data"][position];
+          if(specificInfo["breeds"][0]["id"]==breed){
+            
+           for(let info in specificInfo){
+           
+             if(info=="url"){
+              const image=createCarouselItem(specificInfo["url"], specificInfo["name"], specificInfo["id"]);
+              appendCarousel(image);
+             }
+             else{
+              const item=document.createElement("div");
+              item.textContent=`${info}:${specificInfo[info]}`;
+              infoDump.appendChild(item);
+             } 
+          }
+        
       }
-    }
+     }
 
   }
 
@@ -187,18 +201,18 @@ async function updateProgress(){
  * - You can call this function by clicking on the heart at the top right of any image.
  */
 export async function favourite(imgId) {
-  const imageURL = "https://cdn2.thecatapi.com/images/" + imgId;
-  axios.post(imageURL, {
-    image: imgId,
+  const images=axios.get("https://api.thecatapi.com/v1/images/"+imgId,
+    {
     headers: {
       "x-api-key": "live_v4LgSc6W6TRn00ApEOIBqcOGWh5KmjRKsIRWHKKJB9fypDHSCiawuUKniUHDKDls",
     }
 
-  }).then(function () {
-    alert("success");
-  }).catch(function () { console.log("hello"); });
+  }
+  );
+  console.log(images);
 }
-//favourite("munc");
+/*getFavouritesBtn.addEventListener("click", favourite("acur"));*/
+
 /**
  * 9. Test your favourite() function by creating a getFavourites() function.
  * - Use Axios to get all of your favourites from the cat API.
